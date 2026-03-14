@@ -253,6 +253,9 @@
     /* Tooltip moderno */
     #tooltip {
       position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
       background: rgba(30, 30, 40, 0.9);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
@@ -616,44 +619,21 @@
       const tooltip = document.getElementById('tooltip');
       const nodes = document.querySelectorAll('[data-tip]');
       
-      // Función para mostrar tooltip
-      function showTooltip(event, text) {
+      // Función para mostrar tooltip (fijo al fondo, para no empalmar el diagrama)
+      function showTooltip(_target, _event, text) {
         tooltip.textContent = text;
         tooltip.style.display = 'block';
-        
-        // Posicionamiento inteligente para evitar bordes
-        const x = event.clientX;
-        const y = event.clientY;
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-        const tooltipWidth = 260; // max-width
-        const tooltipHeight = 80; // aproximado
-        
-        let left = x + 14;
-        let top = y - 10;
-        
-        // Ajustar si se sale de la pantalla
-        if (left + tooltipWidth > viewportWidth - 20) {
-          left = x - tooltipWidth - 14;
-        }
-        
-        if (top + tooltipHeight > viewportHeight - 20) {
-          top = y - tooltipHeight - 10;
-        }
-        
-        tooltip.style.left = left + 'px';
-        tooltip.style.top = top + 'px';
       }
 
       // Manejadores de eventos mejorados
       nodes.forEach(el => {
         // Mouse events
         el.addEventListener('mouseenter', (e) => {
-          showTooltip(e, el.dataset.tip);
+          showTooltip(el, e, el.dataset.tip);
         });
         
         el.addEventListener('mousemove', (e) => {
-          showTooltip(e, el.dataset.tip);
+          showTooltip(el, e, el.dataset.tip);
         });
         
         el.addEventListener('mouseleave', () => {
@@ -663,7 +643,7 @@
         // Touch events para móviles
         el.addEventListener('touchstart', (e) => {
           e.preventDefault();
-          showTooltip(e.touches[0], el.dataset.tip);
+          showTooltip(el, e, el.dataset.tip);
         });
         
         el.addEventListener('touchend', () => {
